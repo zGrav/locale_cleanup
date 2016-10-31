@@ -114,7 +114,7 @@ function doStuff(lang, locales, fileName, common) {
 
 	const keys = getKeys.length === 1 ? 'key' : 'keys';
 
-	console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' ' + keys.yellow + ' obtained from '.yellow + fileName.yellow + ' through files in "common"'.yellow);
+	console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' ' + keys.yellow + ' obtained from '.yellow + lang.yellow + '/'.yellow + fileName.yellow + ' through files in "common"'.yellow);
 	console.log();
 
 	let keyFound = false;
