@@ -33,11 +33,6 @@ if (loadFound) {
 
 	const commonFileList = fetchFiles(path.join(__dirname, '../../../common/'));
 
-	console.log();
-	console.log('Loading files/subdirs from "embedded"'.yellow);
-
-	const embeddedFileList = fetchFiles(path.join(__dirname, '../../../embedded/'));
-
 	for (let i = 0; i < runAll.length; i++) {
 		console.log();
 		console.log('Loading ' + runAll[i].toUpperCase().green + ' locale files');
@@ -50,53 +45,7 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/english/' + loadFound.languages[j].file);
 
-						const getKeys = allInternalObjs(getJSONFile);
-
-						console.log();
-						console.log(loadFound.languages[j].file.green + ' file and keys loaded successfully'.green);
-						console.log();
-
-						console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' keys obtained from '.yellow + loadFound.languages[j].file.yellow + ' through files in "common"'.yellow);
-						console.log();
-
-						let keyFound = false;
-						const keysToDelete = [];
-
-						for (let k = 0; k < getKeys.length; k++) {
-							for (let f = 0; f < commonFileList.length; f++) {
-								const file = fs.readFileSync(commonFileList[f], 'utf8');
-
-								if (file.indexOf(getKeys[k]) > -1) {
-									keyFound = true;
-									break;
-								}
-							}
-
-							if (!keyFound && !getKeys[k].startsWith('errors')) {
-								keysToDelete.push(getKeys[k]);
-							}
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
-							console.log();
-						}
-
-						for (let d = 0; d < keysToDelete.length; d++) {
-							unset(getJSONFile, keysToDelete[d]);
-							clean(getJSONFile);
-
-							console.log(keysToDelete[d].cyan + ' deleted'.cyan);
-							console.log();
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log(loadFound.languages[j].file.magenta + ' - Writing changes to disk.'.magenta);
-
-							fs.writeFileSync(path.join(__dirname, './locales/english/' + loadFound.languages[j].file), JSON.stringify(getJSONFile, null, 4));
-						} else {
-							console.log('No keys to delete.'.blue);
-						}
+						doStuff('english', getJSONFile, loadFound.languages[j].file, commonFileList);
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -110,53 +59,7 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/spanish/' + loadFound.languages[j].file);
 
-						const getKeys = allInternalObjs(getJSONFile);
-
-						console.log();
-						console.log(loadFound.languages[j].file.green + ' file and keys loaded successfully'.green);
-						console.log();
-
-						console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' keys obtained from '.yellow + loadFound.languages[j].file.yellow + ' through files in "common"'.yellow);
-						console.log();
-
-						let keyFound = false;
-						const keysToDelete = [];
-
-						for (let k = 0; k < getKeys.length; k++) {
-							for (let f = 0; f < commonFileList.length; f++) {
-								const file = fs.readFileSync(commonFileList[f], 'utf8');
-
-								if (file.indexOf(getKeys[k]) > -1) {
-									keyFound = true;
-									break;
-								}
-							}
-
-							if (!keyFound && !getKeys[k].startsWith('errors')) {
-								keysToDelete.push(getKeys[k]);
-							}
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
-							console.log();
-						}
-
-						for (let d = 0; d < keysToDelete.length; d++) {
-							unset(getJSONFile, keysToDelete[d]);
-							clean(getJSONFile);
-
-							console.log(keysToDelete[d].cyan + ' deleted'.cyan);
-							console.log();
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log(loadFound.languages[j].file.magenta + ' - Writing changes to disk.'.magenta);
-
-							fs.writeFileSync(path.join(__dirname, './locales/spanish/' + loadFound.languages[j].file), JSON.stringify(getJSONFile, null, 4));
-						} else {
-							console.log('No keys to delete.'.blue);
-						}
+						doStuff('spanish', getJSONFile, loadFound.languages[j].file, commonFileList);
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -170,53 +73,7 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/portuguese/' + loadFound.languages[j].file);
 
-						const getKeys = allInternalObjs(getJSONFile);
-
-						console.log();
-						console.log(loadFound.languages[j].file.green + ' file and keys loaded successfully'.green);
-						console.log();
-
-						console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' keys obtained from '.yellow + loadFound.languages[j].file.yellow + ' through files in "common"'.yellow);
-						console.log();
-
-						let keyFound = false;
-						const keysToDelete = [];
-
-						for (let k = 0; k < getKeys.length; k++) {
-							for (let f = 0; f < commonFileList.length; f++) {
-								const file = fs.readFileSync(commonFileList[f], 'utf8');
-
-								if (file.indexOf(getKeys[k]) > -1) {
-									keyFound = true;
-									break;
-								}
-							}
-
-							if (!keyFound && !getKeys[k].startsWith('errors')) {
-								keysToDelete.push(getKeys[k]);
-							}
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
-							console.log();
-						}
-
-						for (let d = 0; d < keysToDelete.length; d++) {
-							unset(getJSONFile, keysToDelete[d]);
-							clean(getJSONFile);
-
-							console.log(keysToDelete[d].cyan + ' deleted'.cyan);
-							console.log();
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log(loadFound.languages[j].file.magenta + ' - Writing changes to disk.'.magenta);
-
-							fs.writeFileSync(path.join(__dirname, './locales/portuguese/' + loadFound.languages[j].file), JSON.stringify(getJSONFile, null, 4));
-						} else {
-							console.log('No keys to delete.'.blue);
-						}
+						doStuff('portuguese', getJSONFile, loadFound.languages[j].file, commonFileList);
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -231,65 +88,73 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/turkish/' + loadFound.languages[j].file);
 
-						const getKeys = allInternalObjs(getJSONFile);
-
-						console.log();
-						console.log(loadFound.languages[j].file.green + ' file and keys loaded successfully'.green);
-						console.log();
-
-						console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' keys obtained from '.yellow + loadFound.languages[j].file.yellow + ' through files in "common"'.yellow);
-						console.log();
-
-						let keyFound = false;
-						const keysToDelete = [];
-
-						for (let k = 0; k < getKeys.length; k++) {
-							for (let f = 0; f < commonFileList.length; f++) {
-								const file = fs.readFileSync(commonFileList[f], 'utf8');
-
-								if (file.indexOf(getKeys[k]) > -1) {
-									keyFound = true;
-									break;
-								}
-							}
-
-							if (!keyFound && !getKeys[k].startsWith('errors')) {
-								keysToDelete.push(getKeys[k]);
-							}
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
-							console.log();
-						}
-
-						for (let d = 0; d < keysToDelete.length; d++) {
-							unset(getJSONFile, keysToDelete[d]);
-							clean(getJSONFile);
-
-							console.log(keysToDelete[d].cyan + ' deleted'.cyan);
-							console.log();
-						}
-
-						if (keysToDelete.length > 0) {
-							console.log(loadFound.languages[j].file.magenta + ' - Writing changes to disk.'.magenta);
-
-							fs.writeFileSync(path.join(__dirname, './locales/turkish/' + loadFound.languages[j].file), JSON.stringify(getJSONFile, null, 4));
-						} else {
-							console.log('No keys to delete.'.blue);
-						}
+						doStuff('turkish', getJSONFile, loadFound.languages[j].file, commonFileList);
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
 					}
 				}
 			}
-
 		}
 	}
+
+	console.log();
+	console.log('Terminated.'.green);
 } else {
 	console.log('found.json not found, are you sure that dumpLangJSONs ran successfully?'.red);
 	process.exit();
+}
+
+function doStuff(lang, locales, fileName, common) {
+	const getKeys = allInternalObjs(locales);
+
+	console.log();
+	console.log(fileName.green + ' file and keys loaded successfully'.green);
+	console.log();
+
+	const keys = getKeys.length === 1 ? 'key' : 'keys';
+
+	console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' ' + keys.yellow + ' obtained from '.yellow + fileName.yellow + ' through files in "common"'.yellow);
+	console.log();
+
+	let keyFound = false;
+	const keysToDelete = [];
+
+	for (let k = 0; k < getKeys.length; k++) {
+		for (let f = 0; f < common.length; f++) {
+			const file = fs.readFileSync(common[f], 'utf8');
+
+			if (file.indexOf(getKeys[k]) > -1) {
+				keyFound = true;
+				break;
+			}
+		}
+
+		if (!keyFound && !getKeys[k].startsWith('errors')) {
+			keysToDelete.push(getKeys[k]);
+		}
+	}
+
+	if (keysToDelete.length > 0) {
+		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
+		console.log();
+	}
+
+	for (let d = 0; d < keysToDelete.length; d++) {
+		unset(locales, keysToDelete[d]);
+		clean(locales);
+
+		console.log(keysToDelete[d].cyan + ' deleted'.cyan);
+		console.log();
+	}
+
+	if (keysToDelete.length > 0) {
+		console.log(fileName.magenta + ' - Writing changes to disk.'.magenta);
+
+		fs.writeFileSync(path.join(__dirname, './locales/' + lang + '/' + fileName), JSON.stringify(locales, null, 4));
+	} else {
+		console.log('No keys to delete.'.blue);
+	}
 }
 
 function clean(obj) {
