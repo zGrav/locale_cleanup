@@ -167,12 +167,16 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 		console.log();
 	}
 
-	for (let d = 0; d < keysToDelete.length; d++) {
-		unset(locales, keysToDelete[d]);
-		clean(locales);
+	const exceptions = ['app.member_type']
 
-		console.log(keysToDelete[d].cyan + ' deleted'.cyan);
-		console.log();
+	for (let d = 0; d < keysToDelete.length; d++) {
+		if (!containsAny(keysToDelete[d], exceptions)) {
+			unset(locales, keysToDelete[d]);
+			clean(locales);
+
+			console.log(keysToDelete[d].cyan + ' deleted'.cyan);
+			console.log();
+		}
 	}
 
 	if (keysToDelete.length > 0) {
@@ -182,6 +186,18 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 	} else {
 		console.log('No keys to delete.'.blue);
 	}
+}
+
+function containsAny(str, substrings) {
+	for (let i = 0; i !== substrings.length; i++) {
+		const substring = substrings[i];
+
+		if (str.indexOf(substring) !== -1) {
+			return substring;
+		}
+	}
+
+	return null;
 }
 
 function clean(obj) {
