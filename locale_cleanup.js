@@ -163,7 +163,7 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 	});
 
 	if (keysToDelete.length > 0) {
-		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
+		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' ' + keys.cyan + ' to delete.'.cyan);
 		console.log();
 	}
 
