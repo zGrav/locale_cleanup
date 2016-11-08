@@ -176,6 +176,9 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 
 			console.log(keysToDelete[d].cyan + ' deleted'.cyan);
 			console.log();
+		} else {
+			console.log('A key exception was found on '.magenta + keysToDelete[d].red + ' , not deleting key but file will be rewritten to disk.'.magenta);
+			console.log();
 		}
 	}
 
