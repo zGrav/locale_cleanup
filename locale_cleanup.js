@@ -163,11 +163,12 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 	});
 
 	if (keysToDelete.length > 0) {
-		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
+		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' ' + keys.cyan + ' to delete.'.cyan);
 		console.log();
 	}
 
 	const exceptions = ['app.member_type']
+	let isException = false;
 
 	for (let d = 0; d < keysToDelete.length; d++) {
 		if (!containsAny(keysToDelete[d], exceptions)) {
@@ -176,13 +177,17 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 
 			console.log(keysToDelete[d].cyan + ' deleted'.cyan);
 			console.log();
+		} else {
+			isException = true;
 		}
 	}
 
-	if (keysToDelete.length > 0) {
+	if (keysToDelete.length > 0 && !isException) {
 		console.log(fileName.magenta + ' - Writing changes to disk.'.magenta);
 
 		fs.writeFileSync(path.join(__dirname, './locales/' + lang + '/' + fileName), JSON.stringify(locales, null, 4));
+	} else if (isException) {
+		console.log('Found exception, not deleting keys.'.blue);
 	} else {
 		console.log('No keys to delete.'.blue);
 	}
