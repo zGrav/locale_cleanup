@@ -16,10 +16,8 @@ const fetchFiles = function(dir, filelist) {
 	files.forEach(function(file) {
 		if (fs.statSync(dir + file).isDirectory()) {
 			filelist = fetchFiles(dir + file + '/', filelist);
-		} else {
-			if (file.endsWith('.js') || file.endsWith('.jsx')) {
-				filelist.push(dir + file);
-			}
+		} else if (file.endsWith('.js') || file.endsWith('.jsx')) {
+			filelist.push(dir + file);
 		}
 	});
 
@@ -30,8 +28,12 @@ if (loadFound) {
 	console.log('dumpLangJSONs output was found.'.green);
 	console.log();
 	console.log('Loading files/subdirs from "common"'.yellow);
+	console.log('Loading files/subdirs from "embedded"'.yellow);
+	console.log('Loading files/subdirs from "libs"'.yellow);
 
 	const commonFileList = fetchFiles(path.join(__dirname, '../../../common/'));
+	const embeddedFileList = fetchFiles(path.join(__dirname, '../../../embedded/'));
+	const libsFileList = fetchFiles(path.join(__dirname, '../../../libs/'));
 
 	for (let i = 0; i < runAll.length; i++) {
 		console.log();
@@ -45,7 +47,9 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/english/' + loadFound.languages[j].file);
 
-						doStuff('english', getJSONFile, loadFound.languages[j].file, commonFileList);
+						if (loadFound.languages[j].file !== 'errors.json') {
+							doStuff('english', getJSONFile, loadFound.languages[j].file, commonFileList, embeddedFileList, libsFileList);
+						}
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -59,7 +63,9 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/spanish/' + loadFound.languages[j].file);
 
-						doStuff('spanish', getJSONFile, loadFound.languages[j].file, commonFileList);
+						if (loadFound.languages[j].file !== 'errors.json') {
+							doStuff('spanish', getJSONFile, loadFound.languages[j].file, commonFileList, embeddedFileList, libsFileList);
+						}
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -73,7 +79,9 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/portuguese/' + loadFound.languages[j].file);
 
-						doStuff('portuguese', getJSONFile, loadFound.languages[j].file, commonFileList);
+						if (loadFound.languages[j].file !== 'errors.json') {
+							doStuff('portuguese', getJSONFile, loadFound.languages[j].file, commonFileList, embeddedFileList, libsFileList);
+						}
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -88,7 +96,9 @@ if (loadFound) {
 					try {
 						const getJSONFile = require('./locales/turkish/' + loadFound.languages[j].file);
 
-						doStuff('turkish', getJSONFile, loadFound.languages[j].file, commonFileList);
+						if (loadFound.languages[j].file !== 'errors.json') {
+							doStuff('turkish', getJSONFile, loadFound.languages[j].file, commonFileList, embeddedFileList, libsFileList);
+						}
 
 					} catch (err) {
 						console.log('Could not require '.red + loadFound.languages[j].file.red);
@@ -105,7 +115,7 @@ if (loadFound) {
 	process.exit();
 }
 
-function doStuff(lang, locales, fileName, common) {
+function doStuff(lang, locales, fileName, common, embed, libs) {
 	const getKeys = allInternalObjs(locales);
 
 	console.log();
@@ -117,23 +127,40 @@ function doStuff(lang, locales, fileName, common) {
 	console.log('Parsing '.yellow + getKeys.length.toString().yellow + ' ' + keys.yellow + ' obtained from '.yellow + lang.yellow + '/'.yellow + fileName.yellow + ' through files in "common"'.yellow);
 	console.log();
 
-	let keyFound = false;
-	const keysToDelete = [];
+	const keysFound = [];
 
 	for (let k = 0; k < getKeys.length; k++) {
 		for (let f = 0; f < common.length; f++) {
 			const file = fs.readFileSync(common[f], 'utf8');
+			const idx = file.indexOf(getKeys[k]);
 
-			if (file.indexOf(getKeys[k]) > -1) {
-				keyFound = true;
-				break;
+			if (idx !== -1 && keysFound.indexOf(getKeys[k]) === -1) {
+				keysFound.push(getKeys[k]);
 			}
 		}
 
-		if (!keyFound && !getKeys[k].startsWith('errors')) {
-			keysToDelete.push(getKeys[k]);
+		for (let e = 0; e < embed.length; e++) {
+			const file = fs.readFileSync(embed[e], 'utf8');
+			const idx = file.indexOf(getKeys[k]);
+
+			if (idx !== -1 && keysFound.indexOf(getKeys[k]) === -1) {
+				keysFound.push(getKeys[k]);
+			}
+		}
+
+		for (let l = 0; l < libs.length; l++) {
+			const file = fs.readFileSync(libs[l], 'utf8');
+			const idx = file.indexOf(getKeys[k]);
+
+			if (idx !== -1 && keysFound.indexOf(getKeys[k]) === -1) {
+				keysFound.push(getKeys[k]);
+			}
 		}
 	}
+
+	const keysToDelete = getKeys.filter(function(val) {
+		return keysFound.indexOf(val) === -1;
+	});
 
 	if (keysToDelete.length > 0) {
 		console.log('Found '.cyan + keysToDelete.length.toString().cyan + ' keys to delete.'.cyan);
