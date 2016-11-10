@@ -116,7 +116,7 @@ function doStuff(lang, locales, fileName, common, embed, libs) {
 		console.log();
 	}
 
-	const exceptions = ['app.member_type', 'app.timeout']
+	const exceptions = ['app.member_type', 'app.timeout', 'signin.alerts']
 
 	for (let d = 0; d < keysToDelete.length; d++) {
 		if (!containsAny(keysToDelete[d], exceptions)) {
